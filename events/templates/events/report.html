@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>گزارش ایونت</title>
+    <style>
+        body{
+            font-family:tahoma;
+            background:#f4f7fb;
+            margin:0;
+            padding:0;
+        }
+
+        .container{
+            width:800px;
+            margin:50px auto;
+            background:white;
+            padding:30px;
+            border-radius:12px;
+            box-shadow:0 6px 18px rgba(0,0,0,0.08);
+        }
+
+        h2{
+            margin-top:0;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            margin-top:20px;
+        }
+
+        th, td{
+            padding:12px;
+            border-bottom:1px solid #ddd;
+            text-align:right;
+        }
+
+        .back{
+            display:inline-block;
+            margin-top:20px;
+            text-decoration:none;
+            color:#2563eb;
+            font-weight:bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h2>گزارش ایونت</h2>
+
+    <p><strong>نام ایونت:</strong> {{ event.title }}</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>شماره دانشجویی</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in allowed_students %}
+            <tr>
+                <td>{{ student.student_id }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td>هیچ دانشجویی برای این ایونت ثبت نشده است.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="/dashboard/" class="back">بازگشت به داشبورد</a>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>آپلود لیست دانشجویان</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+            color: #1f2937;
+        }
+
+        .page-wrap {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+            padding: 32px;
+        }
+
+        .title {
+            margin: 0 0 10px 0;
+            font-size: 34px;
+            color: #111827;
+        }
+
+        .subtitle {
+            margin: 0 0 24px 0;
+            color: #6b7280;
+            font-size: 15px;
+        }
+
+        .event-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+            padding: 14px 16px;
+            border-radius: 12px;
+            margin-bottom: 22px;
+            font-size: 15px;
+        }
+
+        .event-box strong {
+            color: #1e3a8a;
+        }
+
+        .alert {
+            padding: 14px 16px;
+            border-radius: 12px;
+            margin-bottom: 18px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+        }
+
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 16px;
+            padding: 28px;
+            background: #f8fafc;
+            margin-bottom: 20px;
+        }
+
+        .upload-label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #374151;
+            font-size: 15px;
+        }
+
+        .helper-text {
+            margin-top: 14px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            color: #4b5563;
+            padding: 14px 16px;
+            border-radius: 12px;
+            line-height: 1.9;
+            font-size: 14px;
+        }
+
+        .helper-text strong {
+            color: #111827;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 22px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white;
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 22px rgba(37, 99, 235, 0.22);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #2563eb;
+            border: 1px solid #cbd5e1;
+        }
+
+        .btn-secondary:hover {
+            background: #eff6ff;
+        }
+
+        .preview-card {
+            margin-top: 28px;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 24px;
+        }
+
+        .preview-title {
+            margin: 0 0 16px 0;
+            font-size: 24px;
+            color: #111827;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            background: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: right;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #6b7280;
+            font-weight: bold;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .count-box {
+            margin-top: 14px;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        .count-box strong {
+            color: #111827;
+        }
+
+        @media (max-width: 768px) {
+            .page-wrap {
+                margin: 25px auto;
+                padding: 14px;
+            }
+
+            .card {
+                padding: 22px;
+            }
+
+            .title {
+                font-size: 28px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-wrap">
+    <div class="card">
+
+        <h1 class="title">آپلود لیست دانشجویان</h1>
+        <p class="subtitle">فایل اکسل دانشجوهای مجاز برای این جلسه را بارگذاری و بررسی کن.</p>
+
+        <div class="event-box">
+            کلاس: <strong>{{ event.title }}</strong>
+        </div>
+
+        {% if error %}
+            <div class="alert alert-error">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        {% if not preview_ready %}
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="upload-area">
+                    <label class="upload-label">انتخاب فایل اکسل</label>
+                    {{ form.excel_file }}
+
+                    <div class="helper-text">
+                        فایل باید شرایط زیر را داشته باشد:<br>
+                        - فقط فرمت <strong>.xlsx</strong> یا <strong>.xls</strong><br>
+                        - فقط <strong>یک ستون</strong><br>
+                        - نام ستون باید دقیقاً <strong>student_id</strong> باشد
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button type="submit" class="btn btn-primary">بررسی فایل</button>
+                    <a href="/dashboard/" class="btn btn-secondary">بازگشت به داشبورد</a>
+                </div>
+            </form>
+        {% endif %}
+
+        {% if preview_ready %}
+            <div class="alert alert-success">
+                فایل معتبر است. پیش‌نمایش لیست دانشجویان در پایین نمایش داده شده.  
+                در این مرحله هنوز چیزی در دیتابیس ذخیره نشده است.
+            </div>
+
+            <div class="preview-card">
+                <h2 class="preview-title">پیش‌نمایش لیست</h2>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>student_id</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sid in preview_data %}
+                                <tr>
+                                    <td>{{ sid }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="count-box">
+                    تعداد شماره‌های دانشجویی معتبر: <strong>{{ preview_data|length }}</strong>
+                </div>
+
+                <form method="post" style="margin-top:20px;">
+                    {% csrf_token %}
+                    <input type="hidden" name="confirm_upload" value="1">
+
+                    <div class="actions">
+                        <button type="submit" class="btn btn-primary">ثبت نهایی لیست</button>
+                        <a href="/dashboard/" class="btn btn-secondary">بازگشت به داشبورد</a>
+                    </div>
+                </form>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>داشبورد استاد</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .message {
+            background: #dcfce7;
+            color: #166534;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #bbf7d0;
+            font-size: 14px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white;
+            padding: 24px 28px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.18);
+        }
+
+        .header h1 {
+            margin: 0 0 8px 0;
+            font-size: 34px;
+        }
+
+        .header p {
+            margin: 0;
+            font-size: 15px;
+            opacity: 0.95;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            background: white;
+            color: #2563eb;
+            padding: 10px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .btn:hover {
+            background: #eff6ff;
+        }
+
+        .card {
+            background: white;
+            margin-top: 25px;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        .card h2 {
+            margin: 0 0 25px 0;
+            font-size: 26px;
+            color: #111827;
+        }
+
+        .form-box {
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        .event-form .row {
+            margin-bottom: 18px;
+        }
+
+        .two-cols {
+            display: flex;
+            gap: 16px;
+        }
+
+        .col {
+            flex: 1;
+        }
+
+        .col-full {
+            width: 100%;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid #d1d5db;
+            font-size: 14px;
+            transition: 0.2s;
+            background: #f9fafb;
+            font-family: inherit;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #2563eb;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        input[type="date"],
+        input[type="time"] {
+            cursor: pointer;
+        }
+
+        .submit-row {
+            display: flex;
+            justify-content: flex-start;
+            margin-top: 8px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: 0.2s;
+            box-shadow: 0 6px 14px rgba(37, 99, 235, 0.18);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.24);
+        }
+
+        .helper-box {
+            margin-top: 20px;
+            padding: 14px 16px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+            color: #1e40af;
+            font-size: 14px;
+            line-height: 1.9;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        th,
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: right;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        th {
+            color: #6b7280;
+            background: #f8fafc;
+            font-weight: bold;
+        }
+
+        .actions {
+            white-space: nowrap;
+        }
+
+        .actions a {
+            margin-left: 12px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .actions a:hover {
+            opacity: 0.8;
+        }
+
+        .delete {
+            color: #dc2626;
+        }
+
+        .empty-row {
+            text-align: center;
+            color: #6b7280;
+            padding: 22px !important;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.45);
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .modal-box {
+            width: 100%;
+            max-width: 460px;
+            background: white;
+            border-radius: 18px;
+            padding: 28px;
+            box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+            text-align: right;
+        }
+
+        .modal-box h3 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 24px;
+            color: #111827;
+        }
+
+        .modal-box p {
+            margin-bottom: 22px;
+            color: #4b5563;
+            line-height: 1.9;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-start;
+        }
+
+        .btn-cancel {
+            background: #f3f4f6;
+            color: #374151;
+            border: none;
+            padding: 11px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-delete {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 11px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .two-cols {
+                flex-direction: column;
+            }
+
+            .header-buttons {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <div>
+            <h1>پنل مدیریت استاد</h1>
+            <p>مدیریت جلسات و کلاس‌ها</p>
+        </div>
+
+        <div class="header-buttons">
+            <a href="{% url 'password_change' %}" class="btn">تغییر رمز</a>
+            <a href="{% url 'accounts:logout' %}" class="btn">خروج</a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="card">
+        <h2>ایجاد جلسه جدید</h2>
+
+        <div class="form-box">
+            <form method="post" action="/events/create/" class="event-form">
+                {% csrf_token %}
+
+                <div class="row">
+                    <div class="col-full">
+                        <label>نام ایونت</label>
+                        {{ form.title }}
+                    </div>
+                </div>
+
+                <div class="row two-cols">
+                    <div class="col">
+                        <label>تاریخ</label>
+                        {{ form.event_date }}
+                    </div>
+
+                    <div class="col">
+                        <label>ساعت</label>
+                        {{ form.event_time }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-full">
+                        <label>لینک Google Meet</label>
+                        {{ form.meeting_link }}
+                    </div>
+                </div>
+
+                <div class="submit-row">
+                    <button type="submit" class="submit-btn">ثبت ایونت</button>
+                </div>
+            </form>
+
+            <div class="helper-box">
+                برای هر ایونت، لیست دانشجوهای مجاز را از بخش «آپلود اکسل» در جدول پایین ثبت کن.<br>
+                فایل اکسل باید فقط یک ستون با نام <strong>student_id</strong> داشته باشد.
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>ایونت‌های من</h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>نام ایونت</th>
+                        <th>تاریخ</th>
+                        <th>ساعت</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for event in events %}
+                    <tr id="event-row-{{ event.id }}">
+                        <td>{{ event.title }}</td>
+                        <td>{{ event.event_date }}</td>
+                        <td>{{ event.event_time }}</td>
+                        <td class="actions">
+                            <a href="/events/upload-excel/{{ event.id }}/">آپلود اکسل</a>
+                            <a href="#"
+                            onclick="openReportModal('{{ event.title|escapejs }}'); return false;">
+                            گزارش
+                            </a>
+                            <a href="#"
+                               class="delete"
+                               onclick="openDeleteModal('{{ event.id }}', '{{ event.title|escapejs }}'); return false;">
+                                حذف
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="empty-row">هیچ ایونتی ثبت نشده است</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div id="deleteModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+        <h3>حذف ایونت</h3>
+        <p id="deleteModalText">آیا مطمئن هستید؟</p>
+
+        <form id="deleteForm">
+            {% csrf_token %}
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeDeleteModal()">انصراف</button>
+                <button type="submit" class="btn-delete">حذف ایونت</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="reportModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+        <h3>گزارش ایونت</h3>
+        <p id="reportModalText">فعلاً گزارشی موجود نیست.</p>
+
+        <div class="modal-actions">
+            <button type="button" class="btn-cancel" onclick="closeReportModal()">بستن</button>
+        </div>
+    </div>
+</div>
+<script>
+let currentDeleteEventId = null;
+
+function openDeleteModal(eventId, eventTitle) {
+    currentDeleteEventId = eventId;
+    document.getElementById("deleteModal").style.display = "flex";
+    document.getElementById("deleteModalText").innerText =
+        `آیا مطمئن هستید که می‌خواهید ایونت "${eventTitle}" حذف شود؟`;
+}
+
+function closeDeleteModal() {
+    document.getElementById("deleteModal").style.display = "none";
+    currentDeleteEventId = null;
+}
+
+document.getElementById("deleteForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    if (!currentDeleteEventId) return;
+
+    const csrfToken = document.querySelector('#deleteForm input[name="csrfmiddlewaretoken"]').value;
+
+    try {
+        const response = await fetch(`/events/delete/${currentDeleteEventId}/`, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": csrfToken,
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            const row = document.getElementById(`event-row-${currentDeleteEventId}`);
+            if (row) {
+                row.remove();
+            }
+
+            closeDeleteModal();
+            showMessage(data.message);
+        } else {
+            alert(data.message || "حذف انجام نشد.");
+        }
+    } catch (error) {
+        alert("خطا در ارتباط با سرور.");
+    }
+});
+
+function showMessage(message) {
+    const oldMessage = document.querySelector(".message.dynamic-message");
+    if (oldMessage) {
+        oldMessage.remove();
+    }
+
+    const div = document.createElement("div");
+    div.className = "message dynamic-message";
+    div.innerText = message;
+
+    const header = document.querySelector(".header");
+    header.insertAdjacentElement("afterend", div);
+}
+function openReportModal(eventTitle) {
+    document.getElementById("reportModal").style.display = "flex";
+    document.getElementById("reportModalText").innerText =
+        `فعلاً گزارشی برای ایونت "${eventTitle}" ثبت نشده است.`;
+}
+
+function closeReportModal() {
+    document.getElementById("reportModal").style.display = "none";
+}
+</script>
+
+</body>
+</html>

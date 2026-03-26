@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدیریت اساتید</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Tahoma, Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white;
+            padding: 24px 28px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.18);
+        }
+
+        .header h1 {
+            margin: 0 0 8px 0;
+            font-size: 34px;
+        }
+
+        .header p {
+            margin: 0;
+            font-size: 15px;
+            opacity: 0.95;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-top {
+            background: white;
+            color: #2563eb;
+            padding: 10px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .card {
+            background: white;
+            margin-top: 25px;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        .card h2 {
+            margin: 0 0 24px 0;
+            font-size: 26px;
+            color: #111827;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid #d1d5db;
+            background: #f9fafb;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2563eb;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        .submit-row {
+            margin-top: 18px;
+        }
+
+        .submit-btn {
+            border: none;
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .submit-btn:hover {
+            opacity: 0.95;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .toolbar input,
+        .toolbar select {
+            max-width: 240px;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            background: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: right;
+            font-size: 14px;
+            vertical-align: top;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #6b7280;
+            font-weight: bold;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .actions a {
+            margin-left: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .edit-link {
+            color: #2563eb;
+        }
+
+        .delete-link {
+            color: #dc2626;
+        }
+
+        .empty-box {
+            padding: 28px;
+            text-align: center;
+            color: #6b7280;
+            background: #fafafa;
+            border-radius: 12px;
+            border: 1px dashed #d1d5db;
+        }
+
+        .message-success {
+            margin-top: 15px;
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .message-error {
+            margin-top: 15px;
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .message-info {
+            margin-top: 15px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            line-height: 1.9;
+        }
+
+        .activation-box {
+            margin-top: 12px;
+            padding: 12px;
+            background: #f8fafc;
+            border: 1px dashed #93c5fd;
+            border-radius: 10px;
+            direction: ltr;
+            text-align: left;
+            word-break: break-all;
+        }
+
+        .activation-box a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .muted {
+            color: #6b7280;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .toolbar input,
+            .toolbar select {
+                max-width: 100%;
+                width: 100%;
+            }
+        }
+        /*.............Delete Teacher...........................*/
+                    .modal-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(15, 23, 42, 0.45);
+                display: none;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+            }
+
+            .modal-box {
+                width: 100%;
+                max-width: 460px;
+                background: white;
+                border-radius: 18px;
+                padding: 28px;
+                box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+                text-align: right;
+            }
+
+            .modal-box h3 {
+                margin-top: 0;
+                margin-bottom: 12px;
+                font-size: 24px;
+                color: #111827;
+            }
+
+            .modal-box p {
+                margin-bottom: 22px;
+                color: #4b5563;
+                line-height: 1.9;
+            }
+
+            .modal-actions {
+                display: flex;
+                gap: 12px;
+                justify-content: flex-start;
+            }
+
+            .btn-cancel {
+                background: #f3f4f6;
+                color: #374151;
+                border: none;
+                padding: 11px 18px;
+                border-radius: 10px;
+                cursor: pointer;
+                font-weight: bold;
+            }
+
+            .btn-delete {
+                background: #dc2626;
+                color: white;
+                border: none;
+                padding: 11px 18px;
+                border-radius: 10px;
+                cursor: pointer;
+                font-weight: bold;
+            }
+            /*...............Edit Teacher ........................*/
+            #editModal .modal-box {
+                width: 100%;
+                max-width: 520px;
+                background: white;
+                border-radius: 20px;
+                padding: 32px 30px;
+                box-shadow: 0 20px 45px rgba(0,0,0,0.18);
+                text-align: right;
+            }
+
+            #editModal .modal-box h3 {
+                margin: 0 0 24px 0;
+                font-size: 22px;
+                color: #111827;
+                text-align: center;
+            }
+
+            #editModal label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: bold;
+                font-size: 14px;
+                color: #374151;
+            }
+
+            #editModal input {
+                width: 100%;
+                padding: 12px 14px;
+                border-radius: 12px;
+                border: 1px solid #d1d5db;
+                background: #f9fafb;
+                font-size: 14px;
+                margin-bottom: 16px;
+                font-family: inherit;
+            }
+
+            #editModal input:focus {
+                outline: none;
+                border-color: #2563eb;
+                background: white;
+                box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+            }
+
+            #editModal .modal-actions {
+                display: flex;
+                justify-content: flex-start;
+                gap: 12px;
+                margin-top: 10px;
+            }            
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <div>
+            <h1>مدیریت اساتید</h1>
+            <p>ایجاد، بررسی و مدیریت وضعیت اساتید سامانه</p>
+        </div>
+
+        <div class="header-buttons">
+            <a href="{% url 'accounts:teacher_dashboard' %}" class="btn-top">داشبورد استاد</a>
+            <a href="{% url 'accounts:logout' %}" class="btn-top">خروج</a>
+        </div>
+    </div>
+
+    {% if success %}
+        <div class="message-success">
+            {{ success }}
+        </div>
+    {% endif %}
+
+    {% if error %}
+        <div class="message-error">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    {% if activation_url %}
+        <div class="message-info">
+            لینک فعال‌سازی برای استاد جدید ساخته شد.
+            <div class="activation-box">
+                <a href="{{ activation_url }}" target="_blank">{{ activation_url }}</a>
+            </div>
+            <div class="muted">
+                این بخش فعلاً برای تست و دیباگ نمایش داده می‌شود.
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="card">
+        <h2>افزودن استاد</h2>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-grid">
+                <div>
+                    <label for="first_name">نام</label>
+                    <input type="text" id="first_name" name="first_name" placeholder="نام استاد" required>
+                </div>
+
+                <div>
+                    <label for="last_name">نام خانوادگی</label>
+                    <input type="text" id="last_name" name="last_name" placeholder="نام خانوادگی استاد" required>
+                </div>
+
+                <div class="full-width">
+                    <label for="email">ایمیل</label>
+                    <input type="email" id="email" name="email" placeholder="example@email.com" required>
+                </div>
+            </div>
+
+            <div class="submit-row">
+                <button type="submit" class="submit-btn">افزودن استاد</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>لیست اساتید</h2>
+
+        <div class="toolbar">
+            <input type="text" placeholder="جست‌وجو بر اساس نام یا ایمیل">
+            <select>
+                <option>همه وضعیت‌ها</option>
+                <option>فعال</option>
+                <option>منتظر فعال‌سازی</option>
+            </select>
+            <select>
+                <option>مرتب‌سازی</option>
+                <option>نام</option>
+                <option>تاریخ ایجاد</option>
+            </select>
+        </div>
+
+        {% if teachers %}
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>نام</th>
+                            <th>نام خانوادگی</th>
+                            <th>ایمیل</th>
+                            <th>وضعیت</th>
+                            <th>تاریخ ایجاد</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for teacher in teachers %}
+                        <tr>
+                            <td>{{ teacher.first_name|default:"-" }}</td>
+                            <td>{{ teacher.last_name|default:"-" }}</td>
+                            <td>{{ teacher.email }}</td>
+                            <td>
+                                {% if teacher.is_active and teacher.is_verified %}
+                                    <span class="status-badge status-active">فعال</span>
+                                {% else %}
+                                    <span class="status-badge status-pending">منتظر فعال‌سازی</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ teacher.date_joined|date:"Y-m-d H:i" }}</td>
+                            <td class="actions">                            
+                                <a href="#"
+                                class="edit-link"
+                                onclick="openEditModal('{{ teacher.id }}', '{{ teacher.first_name|escapejs }}', '{{ teacher.last_name|escapejs }}', '{{ teacher.email|escapejs }}'); return false;">
+                                ویرایش
+                                </a>
+                                <a href="#"
+                                class="delete-link"
+                                onclick="openDeleteModal('{{ teacher.id }}', '{{ teacher.first_name|escapejs }} {{ teacher.last_name|escapejs }}'); return false;">
+                                    حذف
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-box">
+                هیچ استادی ثبت نشده است.
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+<!.....................Delete teacher..................................>
+<div id="deleteModal" class="modal-overlay" style="display:none;">
+        <div class="modal-box">
+            <h3>حذف استاد</h3>
+            <p id="deleteModalText">آیا مطمئن هستید؟</p>
+
+            <form id="deleteTeacherForm" method="post">
+                {% csrf_token %}
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeDeleteModal()">انصراف</button>
+                    <button type="submit" class="btn-delete">حذف استاد</button>
+                </div>
+            </form>
+        </div>
+</div>    
+<!...........................Java Script Delete Teacher.....................................>
+<script>
+    function openDeleteModal(teacherId, teacherName) {
+        document.getElementById("deleteModal").style.display = "flex";
+        document.getElementById("deleteModalText").innerText =
+            `آیا مطمئن هستید که می‌خواهید استاد "${teacherName}" حذف شود؟`;
+
+        const form = document.getElementById("deleteTeacherForm");
+        form.action = `/teachers/delete/${teacherId}/`;
+    }
+
+    function closeDeleteModal() {
+        document.getElementById("deleteModal").style.display = "none";
+    }
+</script>
+<!....................Edit teacher............................>
+<div id="editModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+        <h3>ویرایش استاد</h3>
+
+        <form id="editTeacherForm" method="post">
+            {% csrf_token %}
+
+            <label>نام</label>
+            <input type="text" id="edit_first_name" name="first_name" required>
+
+            <label>نام خانوادگی</label>
+            <input type="text" id="edit_last_name" name="last_name" required>
+
+            <label>ایمیل</label>
+            <input type="email" id="edit_email" name="email" required>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeEditModal()">انصراف</button>
+                <button type="submit" class="btn-delete" style="background:#2563eb;">ذخیره</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openEditModal(id, first, last, email) {
+    document.getElementById("editModal").style.display = "flex";
+    document.getElementById("edit_first_name").value = first;
+    document.getElementById("edit_last_name").value = last;
+    document.getElementById("edit_email").value = email;
+    document.getElementById("editTeacherForm").action = `/teachers/edit/${id}/`;
+}
+
+function closeEditModal() {
+    document.getElementById("editModal").style.display = "none";
+}
+</script>
+
+</body>
+</html>

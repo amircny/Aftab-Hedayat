@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>حذف ایونت</title>
+</head>
+
+<body style="font-family:tahoma;text-align:center;margin-top:100px">
+
+<h2>حذف ایونت</h2>
+
+<p>
+آیا مطمئن هستید که می‌خواهید این ایونت را حذف کنید؟
+</p>
+
+<h3>
+{{ event.title }}
+</h3>
+
+<form method="post">
+{% csrf_token %}
+
+<button type="submit" style="background:red;color:white;padding:10px 20px;border:none;border-radius:6px;">
+حذف ایونت
+</button>
+
+</form>
+
+<br>
+
+<a href="/dashboard/">بازگشت</a>
+
+</body>
+</html>
