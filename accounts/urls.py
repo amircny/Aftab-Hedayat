@@ -39,4 +39,14 @@ urlpatterns = [
         "teachers/edit/<int:teacher_id>/", 
         views.edit_teacher, name="edit_teacher"
         ),
+    #Monitoring
+    path(
+        "monitoring/", views.monitoring_center,
+          name="monitoring_center"
+        ),
+   #reset-password
+    path("teachers/reset-password/<int:teacher_id>/",
+          views.reset_teacher_password, 
+          name="reset_teacher_password"
+         ),
 ]

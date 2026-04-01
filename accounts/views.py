@@ -12,6 +12,9 @@ from .forms import EmailLoginForm
 from .models import ActivationToken
 from .models import User
 from .forms import TeacherEditForm
+from django.http import JsonResponse
+from .models import ActivationToken, ActivityLog
+from django.contrib.auth.hashers import make_password
 
 User = get_user_model()
 
@@ -82,8 +85,37 @@ def delete_teacher(request, teacher_id):
         return redirect("accounts:admin_dashboard")
 
     teacher = get_object_or_404(User, id=teacher_id, role="TEACHER")
+    ActivityLog.objects.create(
+        admin_user=request.user,
+        action="create_teacher",
+        status="success",
+        description=f"استاد جدید با ایمیل {teacher.email} ایجاد شد."
+    )
     teacher.delete()
     return redirect("accounts:admin_dashboard")
+#...........................reset_teacher_password.........................................
+def reset_teacher_password(request, teacher_id):
+    teacher = get_object_or_404(User, id=teacher_id, role="TEACHER")
+
+    if request.method == "POST":
+        new_password = request.POST.get("new_password", "").strip()
+
+        if not new_password:
+            return JsonResponse({"success": False, "message": "رمز جدید وارد نشده است."}, status=400)
+
+        teacher.password = make_password(new_password)
+        teacher.save()
+
+        ActivityLog.objects.create(
+            admin_user=request.user,
+            action="edit_teacher",
+            status="success",
+            description=f"رمز عبور استاد {teacher.email} توسط ادمین بازنشانی شد."
+        )
+
+        return JsonResponse({"success": True, "message": "رمز عبور استاد با موفقیت تغییر کرد."})
+
+    return JsonResponse({"success": False, "message": "رمز جدید وارد نشده است."}, status=400)
 #.......................................................................................
 def admin_dashboard(request):
     teachers = User.objects.filter(role="TEACHER").order_by("-date_joined")
@@ -122,7 +154,14 @@ def admin_dashboard(request):
             is_active=False,
             is_verified=False,
         )
-
+        #.......................................................................................................
+        ActivityLog.objects.create(
+            admin_user=request.user,
+            action="create_teacher",
+            status="success",
+            description=f"استاد جدید با ایمیل {teacher.email} ایجاد شد."
+        )
+        #.......................................................................................................
         activation = ActivationToken.objects.create(user=teacher)
 
         activation_url = request.build_absolute_uri(
@@ -159,12 +198,32 @@ def admin_dashboard(request):
     )
 #............................Edit Teacher ...................................
 def edit_teacher(request, teacher_id):
-    teacher = get_object_or_404(User, id=teacher_id)
+    teacher = get_object_or_404(User, id=teacher_id, role="TEACHER")
 
     if request.method == "POST":
-        teacher.first_name = request.POST.get("first_name")
-        teacher.last_name = request.POST.get("last_name")
-        teacher.email = request.POST.get("email")
+        teacher.first_name = request.POST.get("first_name", "").strip()
+        teacher.last_name = request.POST.get("last_name", "").strip()
+        teacher.email = request.POST.get("email", "").strip()
         teacher.save()
+        ActivityLog.objects.create(
+            admin_user=request.user,
+            action="edit_teacher",
+            status="success",
+            description=f"اطلاعات استاد {teacher.email} ویرایش شد."
+        )
+        return JsonResponse({"success": True, "message": "اطلاعات استاد با موفقیت ذخیره شد"})
 
-    return redirect("accounts:admin_dashboard")
+    return JsonResponse({"success": False, "message": "درخواست نامعتبر است"}, status=400)
+
+#............................Monitoring......................................
+def monitoring_center(request):
+    latest_teachers = User.objects.filter(role="TEACHER").order_by("-date_joined")[:5]
+    latest_logs = ActivityLog.objects.order_by("-created_at")[:10]
+
+    context = {
+        "latest_teachers": latest_teachers,
+        "admin_last_login": request.user.last_login,
+        "latest_logs": latest_logs,
+    }
+
+    return render(request, "accounts/monitoring_center.html", context)

@@ -52,3 +52,38 @@ class ActivationToken(models.Model):
 
     def __str__(self):
         return f"{self.user.email} - {self.token}"
+
+#......................................ActivityLog....................................................
+class ActivityLog(models.Model):
+        ACTION_CHOICES = [
+            ("create_teacher", "Create Teacher"),
+            ("edit_teacher", "Edit Teacher"),
+            ("delete_teacher", "Delete Teacher"),
+            ("create_event", "Create Event"),
+            ("edit_event", "Edit Event"),
+            ("delete_event", "Delete Event"),
+            ("upload_excel", "Upload Excel"),
+            ("send_activation_link", "Send Activation Link"),
+            ("login", "Login"),
+            ("logout", "Logout"),
+            ("error", "Error"),
+        ]
+
+        STATUS_CHOICES = [
+            ("success", "Success"),
+            ("warning", "Warning"),
+            ("error", "Error"),
+        ]
+
+        admin_user = models.ForeignKey(
+            "User",
+            on_delete=models.CASCADE,
+            related_name="activity_logs"
+        )
+        action = models.CharField(max_length=50, choices=ACTION_CHOICES)
+        status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="success")
+        description = models.TextField()
+        created_at = models.DateTimeField(auto_now_add=True)
+
+        def __str__(self):
+            return f"{self.admin_user.email} - {self.action} - {self.status}"

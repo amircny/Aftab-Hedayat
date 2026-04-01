@@ -404,7 +404,7 @@
         </div>
 
         <div class="header-buttons">
-            <a href="{% url 'accounts:teacher_dashboard' %}" class="btn-top">داشبورد استاد</a>
+            <a href="{% url 'accounts:monitoring_center' %}" class="btn-top">مرکز مانیتورینگ</a>
             <a href="{% url 'accounts:logout' %}" class="btn-top">خروج</a>
         </div>
     </div>
@@ -508,16 +508,24 @@
                             </td>
                             <td>{{ teacher.date_joined|date:"Y-m-d H:i" }}</td>
                             <td class="actions">                            
-                                <a href="#"
+                               <a href="#"
                                 class="edit-link"
                                 onclick="openEditModal('{{ teacher.id }}', '{{ teacher.first_name|escapejs }}', '{{ teacher.last_name|escapejs }}', '{{ teacher.email|escapejs }}'); return false;">
                                 ویرایش
                                 </a>
+
+                                <a href="#"
+                                class="edit-link"
+                                onclick="openResetPasswordModal('{{ teacher.id }}', '{{ teacher.email|escapejs }}'); return false;">
+                                ریست پسورد
+                                </a>
+
                                 <a href="#"
                                 class="delete-link"
                                 onclick="openDeleteModal('{{ teacher.id }}', '{{ teacher.first_name|escapejs }} {{ teacher.last_name|escapejs }}'); return false;">
                                     حذف
                                 </a>
+                                
                             </td>
                         </tr>
                         {% endfor %}
@@ -565,7 +573,9 @@
 <!....................Edit teacher............................>
 <div id="editModal" class="modal-overlay" style="display:none;">
     <div class="modal-box">
-        <h3>ویرایش استاد</h3>
+        <h3 style="text-align:center; margin-bottom:20px;">
+            ✏️ ویرایش اطلاعات استاد
+        </h3>
 
         <form id="editTeacherForm" method="post">
             {% csrf_token %}
@@ -581,10 +591,28 @@
 
             <div class="modal-actions">
                 <button type="button" class="btn-cancel" onclick="closeEditModal()">انصراف</button>
-                <button type="submit" class="btn-delete" style="background:#2563eb;">ذخیره</button>
+                <button type="submit" class="btn-delete" style="background:#2563eb;">ذخیره تغییرات</button>
             </div>
         </form>
     </div>
+</div>
+
+<div id="resetModal" class="modal-overlay" style="display:none;">
+        <div class="modal-box">
+            <h3 style="text-align:center;">🔑 ریست پسورد استاد</h3>
+
+            <form id="resetPasswordForm" method="post">
+                {% csrf_token %}
+
+                <label>رمز جدید</label>
+                <input type="password" id="new_password" name="new_password" required>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeResetModal()">انصراف</button>
+                    <button type="submit" class="btn-delete" style="background:#2563eb;">تغییر رمز</button>
+                </div>
+            </form>
+        </div>
 </div>
 
 <script>
@@ -599,7 +627,113 @@ function openEditModal(id, first, last, email) {
 function closeEditModal() {
     document.getElementById("editModal").style.display = "none";
 }
+
+window.onclick = function(event) {
+    const modal = document.getElementById("editModal");
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+}
+
+document.getElementById("editTeacherForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const form = this;
+    const url = form.action;
+    const formData = new FormData(form);
+
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": formData.get("csrfmiddlewaretoken"),
+            "X-Requested-With": "XMLHttpRequest"
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            closeEditModal();
+
+            const toast = document.getElementById("toastMessage");
+            toast.style.display = "block";
+
+            setTimeout(() => {
+                toast.style.display = "none";
+                location.reload();
+            }, 1500);
+        } else {
+            alert(data.message || "خطا در ذخیره");
+        }
+    })
+    .catch(() => {
+        alert("خطا در ارتباط با سرور");
+    });
+});
+
+function openResetPasswordModal(id, email) {
+    document.getElementById("resetModal").style.display = "flex";
+    document.getElementById("resetPasswordForm").action = `/teachers/reset-password/${id}/`;
+    document.getElementById("new_password").value = "";
+}
+
+function closeResetModal() {
+    document.getElementById("resetModal").style.display = "none";
+}
+document.getElementById("resetPasswordForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const form = this;
+    const url = form.action;
+    const formData = new FormData(form);
+
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": formData.get("csrfmiddlewaretoken"),
+            "X-Requested-With": "XMLHttpRequest"
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            closeResetModal();
+
+            const toast = document.getElementById("toastMessage");
+            toast.innerText = data.message;
+            toast.style.display = "block";
+
+            setTimeout(() => {
+                toast.style.display = "none";
+            }, 1500);
+        } else {
+            alert(data.message || "خطا در تغییر رمز");
+        }
+    })
+    .catch(() => {
+        alert("خطا در ارتباط با سرور");
+    });
+});
 </script>
+
+<div id="toastMessage" style="
+    display:none;
+    position:fixed;
+    top:20px;
+    left:20px;
+    background:#dcfce7;
+    color:#166534;
+    border:1px solid #bbf7d0;
+    padding:12px 18px;
+    border-radius:10px;
+    box-shadow:0 10px 24px rgba(0,0,0,0.12);
+    z-index:10000;
+    font-size:14px;
+    font-weight:bold;
+">
+    اطلاعات استاد با موفقیت ذخیره شد
+</div>
 
 </body>
 </html>
