@@ -465,20 +465,24 @@
     <div class="card">
         <h2>لیست اساتید</h2>
 
-        <div class="toolbar">
-            <input type="text" placeholder="جست‌وجو بر اساس نام یا ایمیل">
-            <select>
-                <option>همه وضعیت‌ها</option>
-                <option>فعال</option>
-                <option>منتظر فعال‌سازی</option>
-            </select>
-            <select>
-                <option>مرتب‌سازی</option>
-                <option>نام</option>
-                <option>تاریخ ایجاد</option>
-            </select>
-        </div>
+        <form method="get" class="toolbar">
+            <input type="text" name="search" placeholder="جست‌وجو بر اساس نام یا ایمیل" value="{{ request.GET.search }}">
 
+            <select name="status">
+                <option value="">همه وضعیت‌ها</option>
+                <option value="active" {% if request.GET.status == "active" %}selected{% endif %}>فعال</option>
+                <option value="pending" {% if request.GET.status == "pending" %}selected{% endif %}>منتظر فعال‌سازی</option>
+            </select>
+
+            <select name="sort">
+                <option value="">مرتب‌سازی</option>
+                <option value="name" {% if request.GET.sort == "name" %}selected{% endif %}>نام</option>
+                <option value="date" {% if request.GET.sort == "date" %}selected{% endif %}>تاریخ ایجاد</option>
+            </select>
+
+            <button type="submit" class="submit-btn">اعمال</button>
+        </form>
+        
         {% if teachers %}
             <div class="table-wrap">
                 <table>

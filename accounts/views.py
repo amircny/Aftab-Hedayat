@@ -118,7 +118,24 @@ def reset_teacher_password(request, teacher_id):
     return JsonResponse({"success": False, "message": "رمز جدید وارد نشده است."}, status=400)
 #.......................................................................................
 def admin_dashboard(request):
-    teachers = User.objects.filter(role="TEACHER").order_by("-date_joined")
+    teachers = User.objects.filter(role="TEACHER")
+
+    search = request.GET.get("search", "").strip()
+    status = request.GET.get("status", "").strip()
+    sort = request.GET.get("sort", "").strip()
+
+    if search:
+        teachers = teachers.filter(email__icontains=search) | User.objects.filter(role="TEACHER", first_name__icontains=search) | User.objects.filter(role="TEACHER", last_name__icontains=search)
+
+    if status == "active":
+        teachers = teachers.filter(is_active=True, is_verified=True)
+    elif status == "pending":
+        teachers = teachers.filter(is_active=False, is_verified=False)
+
+    if sort == "name":
+        teachers = teachers.order_by("first_name", "last_name")
+    else:
+        teachers = teachers.order_by("-date_joined")
 
     if request.method == "POST":
         first_name = request.POST.get("first_name", "").strip()
