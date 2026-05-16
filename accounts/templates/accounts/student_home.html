@@ -1,0 +1,363 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>رویدادها</title>
+
+<style>
+:root {
+    --bg1: #fff7ed;
+    --bg2: #dbde14;
+    --card: rgba(255,255,255,0.9);
+    --text: #3b2f2f;
+    --muted: #7c6f64;
+    --accent: #215199;
+}
+
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: system-ui;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
+    min-height: 100vh;
+    color: var(--text);
+}
+
+/* HEADER */
+.top {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* HERO */
+.hero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    position: relative;
+}
+
+/* LOGO */
+.hero img {
+    height: 140px;
+    z-index: 2;
+}
+
+/* GLOW */
+.hero::before {
+    content: "";
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(255,200,0,0.4), transparent 70%);
+    filter: blur(40px);
+    z-index: 1;
+}
+
+/* TEXT */
+.hero-text {
+    text-align: right;
+    z-index: 2;
+}
+
+.hero-text h1 {
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.hero-text p {
+    margin-top: 8px;
+    color: var(--muted);
+}
+
+/* CONTAINER */
+.container {
+    max-width: 700px;
+    margin: 20px auto;
+}
+
+/* EVENTS */
+.events {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    align-items: center;
+}
+
+/* CARD */
+.card {
+    width: 80%;
+    max-width: 650px;
+    background: var(--card);
+    backdrop-filter: blur(12px);
+    border-radius: 22px;
+    padding: 24px;
+    cursor: pointer;
+    transition: 0.3s;
+    border: 1px solid rgba(255,255,255,0.4);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    background: white;
+}
+
+/* TOP ROW */
+.top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* BADGE */
+.badge {
+    padding: 6px 14px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* TITLE */
+.title {
+    font-size: 20px;
+    font-weight: 800;
+}
+
+/* META */
+.meta {
+    margin-top: 8px;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* TEACHER */
+.teacher {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #b45309;
+    font-weight: 600;
+}
+
+/* FOOTER */
+footer {
+    text-align: center;
+    margin-top: 60px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+
+    .hero {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .hero-text {
+        text-align: center;
+    }
+
+    .hero img {
+        height: 100px;
+    }
+
+    .card {
+        width: 95%;
+    }
+
+    .title {
+        font-size: 18px;
+    }
+
+    .meta,
+    .teacher {
+        font-size: 13px;
+    }
+}
+/*.................POPUP.................*/
+/* MODAL BACKDROP */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+/* GLASS BOX */
+.modal-box {
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    max-width: 350px;
+    text-align: center;
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+/* INPUT */
+.modal-box input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: 10px;
+    border: none;
+}
+
+/* BUTTON */
+.modal-box button {
+    margin-top: 15px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    background: #f59e0b;
+    color: white;
+    cursor: pointer;
+}
+
+/* CLOSE */
+.close {
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="top">
+    <div class="hero">
+
+        <img src="{% static 'images/logo.png' %}" alt="logo">
+
+        <div class="hero-text">
+            <h1>سامانه مدیریت کلاس‌ها و رویدادهای آموزشی</h1>
+            <p>دسترسی سریع و امن به کلاس‌های شما</p>
+        </div>
+
+    </div>
+</header>
+
+<div class="container">
+
+    <div class="events">
+        {% for event in events %}
+           <div class="card" onclick="openModal({{ event.id }})">
+
+                <div class="top-row">
+                    <div class="title">{{ event.title }}</div>
+                    <div class="badge">کلاس</div>
+                </div>
+
+                <div class="meta">
+                    📅 {{ event.event_date }} &nbsp; • &nbsp; ⏰ {{ event.event_time }}
+                </div>
+
+                <div class="teacher">
+                    👤 استاد {{ event.teacher.first_name }} {{ event.teacher.last_name }}
+                </div>
+
+            </div>
+
+        {% empty %}
+            <div class="meta">هیچ رویدادی وجود ندارد</div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<footer>
+    © 2026 سامانه آفتاب هدایت
+</footer>
+    <!-- MODAL POPUP -->
+    <div id="modal" class="modal">
+        <div class="modal-box">
+
+            <h2>ورود به کلاس</h2>
+            <p>لطفا شماره دانشجویی را وارد کنید</p>
+
+            <input type="text" id="student_id" placeholder="شماره دانشجویی">
+
+            <button onclick="checkAccess()">بررسی</button>
+
+            <p id="result"></p>
+
+            <span class="close" onclick="closeModal()">×</span>
+
+        </div>
+    </div>
+    <script>
+
+        let currentEventId = null;
+
+        // باز کردن پاپاپ + گرفتن event_id
+        function openModal(eventId) {
+            currentEventId = eventId;
+            console.log("EVENT ID:", currentEventId);
+            document.getElementById("modal").style.display = "flex";
+        }
+
+        // بستن
+        function closeModal() {
+            document.getElementById("modal").style.display = "none";
+            document.getElementById("result").innerText = "";
+            document.getElementById("student_id").value = "";
+        }
+
+        // چک دسترسی
+        function checkAccess() {
+
+            let student_id = document.getElementById("student_id").value;
+
+            fetch(`/events/check-access/?student_id=${student_id}&event_id=${currentEventId}`)
+            .then(res => res.json())
+            .then(data => {
+
+                if (data.status === "ok") {
+                    document.getElementById("result").innerHTML =
+                        `<a href="${data.link}" target="_blank">ورود به کلاس</a>`;
+                }
+
+                else if (data.status === "denied") {
+                    document.getElementById("result").innerText =
+                        "شما اجازه شرکت در این جلسه را ندارید";
+                }
+
+                else if (data.status === "time_error") {
+                    document.getElementById("result").innerText =
+                        "در زمان مجاز اقدام کنید";
+                }
+
+                else {
+                    document.getElementById("result").innerText =
+                        "شماره دانشجویی معتبر نیست";
+                }
+
+            });
+        }
+
+   </script>
+
+</body>
+</html>

@@ -16,6 +16,7 @@ from django.http import JsonResponse
 from .models import ActivationToken, ActivityLog
 from django.contrib.auth.hashers import make_password
 
+
 User = get_user_model()
 
 
@@ -244,3 +245,9 @@ def monitoring_center(request):
     }
 
     return render(request, "accounts/monitoring_center.html", context)
+#......................... student_home.....................................
+def student_home(request):
+    events = Event.objects.all().order_by('event_date', 'event_time')
+    return render(request, "accounts/student_home.html", {
+        "events": events
+    })

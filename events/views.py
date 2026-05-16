@@ -1,24 +1,41 @@
 import pandas as pd
-
+import openpyxl
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from .forms import EventForm, ExcelUploadForm
 from .models import Event, AllowedStudent
-from django.http import JsonResponse
-
+from django.utils import timezone
+from accounts.models import User
+from .models import Attendance
+from django.http import HttpResponse
+from datetime import datetime
+from datetime import datetime, timedelta
 
 # =========================
 # داشبورد استاد
 # =========================
 @login_required
 def teacher_dashboard(request):
+
+    if request.method == "POST":
+        form = EventForm(request.POST)
+
+        if form.is_valid():
+            event = form.save(commit=False)
+            event.teacher = request.user
+            event.save()
+
+            messages.success(request, "ایونت با موفقیت ثبت شد.")
+            return redirect("teacher_dashboard")
+
+    else:
+        form = EventForm()
+
     events = Event.objects.filter(
         teacher=request.user
     ).order_by("-created_at")
-
-    form = EventForm()
 
     return render(request, "accounts/dashboard.html", {
         "events": events,
@@ -43,7 +60,10 @@ def create_event(request):
             messages.success(request, "ایونت با موفقیت ثبت شد.")
             return redirect("teacher_dashboard")
 
-    return redirect("teacher_dashboard")
+    else:
+        form = EventForm()   # 🔥 مهم
+
+    #return render(request, "events/create_event.html", {"form": form})
 
 
 # =========================
@@ -205,3 +225,78 @@ def event_report(request, event_id):
         "success": False,
         "message": "فعلاً گزارشی موجود نیست."
     })
+
+# =========================
+# POP UP
+# =========================
+
+def check_student_access(request):
+    try:
+        student_id = request.GET.get("student_id")
+        event_id = request.GET.get("event_id")
+
+        if not student_id or not event_id:
+            return JsonResponse({"error": "missing data"})
+
+        student_id = str(student_id).strip()
+        event = Event.objects.get(id=event_id)
+
+        # ⏰ چک زمان (اولین چیز)
+        import pytz
+        from django.utils import timezone
+
+        berlin = pytz.timezone("Europe/Berlin")
+
+        now = timezone.now().astimezone(berlin)
+        start = event.available_from.astimezone(berlin)
+        end = event.available_until.astimezone(berlin)
+
+        if not (start <= now <= end):
+            return JsonResponse({"status": "time_error"})
+
+        # ✅ چک دانشجو
+        allowed = AllowedStudent.objects.filter(
+            event=event,
+            student_id__icontains=student_id
+        ).exists()
+
+        if not allowed:
+            return JsonResponse({"status": "denied"})
+
+        # ✅ ثبت حضور (فقط وقتی همه چیز اوکیه)
+        Attendance.objects.get_or_create(
+            event=event,
+            student_id=student_id
+        )
+
+        return JsonResponse({
+            "status": "ok",
+            "link": event.meeting_link or ""
+        })
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)})
+        
+    
+def export_attendance(request, event_id):
+    event = Event.objects.get(id=event_id)
+    attendances = Attendance.objects.filter(event=event)
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Attendance"
+
+    # header
+    ws.append(["Student ID", "Joined At"])
+
+    # data
+    for att in attendances:
+        ws.append([att.student_id, att.joined_at.strftime("%Y-%m-%d %H:%M")])
+
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    response["Content-Disposition"] = f'attachment; filename="attendance_{event.id}.xlsx"'
+
+    wb.save(response)
+    return response    

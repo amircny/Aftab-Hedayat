@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 app_name = "accounts"   # ⭐ خیلی مهم برای reverse و namespace
@@ -49,4 +49,8 @@ urlpatterns = [
           views.reset_teacher_password, 
           name="reset_teacher_password"
          ),
-]
+
+    #Student-Front
+    path('', views.student_home, name='student_home'),
+    
+]   
