@@ -63,7 +63,7 @@ def create_event(request):
     else:
         form = EventForm()   # 🔥 مهم
 
-    #return render(request, "events/create_event.html", {"form": form})
+    return render(request, "accounts/dashboard.html", {"form": form})
 
 
 # =========================
