@@ -344,7 +344,7 @@
         <h2>ایجاد جلسه جدید</h2>
 
         <div class="form-box">
-            <form method="post" action="" class="event-form">
+            <form method="post" action="{% url 'teacher_dashboard' %}" class="event-form">
                 {% csrf_token %}
 
                 <div class="row">
