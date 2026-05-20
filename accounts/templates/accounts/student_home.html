@@ -331,7 +331,7 @@ footer {
         function checkAccess() {
 
             let student_id = document.getElementById("student_id").value;
-
+            student_id = student_id.trim();
             fetch(`/events/check-access/?student_id=${student_id}&event_id=${currentEventId}`)
             .then(res => res.json())
             .then(data => {
