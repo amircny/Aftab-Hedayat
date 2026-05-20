@@ -29,7 +29,8 @@ def teacher_dashboard(request):
 
             messages.success(request, "ایونت با موفقیت ثبت شد.")
             return redirect("teacher_dashboard")
-
+        else:
+         print(form.errors)
     else:
         form = EventForm()
 
