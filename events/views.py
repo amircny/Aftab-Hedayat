@@ -59,12 +59,16 @@ def create_event(request):
 
             messages.success(request, "ایونت با موفقیت ثبت شد.")
             return redirect("teacher_dashboard")
+        else:
+            print(form.errors)
 
     else:
-        form = EventForm()   # 🔥 مهم
+        form = EventForm()
 
-    return render(request, "accounts/dashboard.html", {"form": form})
-
+    return render(request, "accounts/dashboard.html", {
+        "form": form,
+        "events": Event.objects.filter(teacher=request.user)
+    })
 
 # =========================
 # آپلود اکسل دانشجو
