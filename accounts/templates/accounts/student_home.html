@@ -232,6 +232,46 @@ footer {
     cursor: pointer;
 }
 
+.result-success{
+    background:#dcfce7;
+    color:#166534;
+    padding:15px;
+    border-radius:12px;
+    margin-top:15px;
+    text-align:center;
+}
+
+.result-btn{
+    display:inline-block;
+    margin-top:10px;
+    padding:10px 20px;
+    background:#16a34a;
+    color:white;
+    text-decoration:none;
+    border-radius:8px;
+    font-weight:bold;
+}
+
+.result-error{
+    background:#fee2e2;
+    color:#991b1b;
+    padding:15px;
+    border-radius:12px;
+    margin-top:15px;
+    text-align:center;
+    font-weight:600;
+}
+
+.result-warning{
+    background:#fef3c7;
+    color:#92400e;
+    padding:15px;
+    border-radius:12px;
+    margin-top:15px;
+    text-align:center;
+    font-weight:600;
+}
+
 /* CLOSE */
 .close {
     position: absolute;
@@ -272,11 +312,7 @@ footer {
 
                 <div class="meta">
                     📅 {{ event.event_date }} &nbsp; • &nbsp; ⏰ {{ event.event_time }}
-                </div>
-
-                <div class="teacher">
-                    👤 استاد {{ event.teacher.first_name }} {{ event.teacher.last_name }}
-                </div>
+                </div> 
 
             </div>
 
@@ -303,7 +339,7 @@ footer {
 
             <button onclick="checkAccess()">بررسی</button>
 
-            <p id="result"></p>
+            <div id="result"></div>
 
             <span class="close" onclick="closeModal()">×</span>
 
@@ -323,7 +359,7 @@ footer {
         // بستن
         function closeModal() {
             document.getElementById("modal").style.display = "none";
-            document.getElementById("result").innerText = "";
+            document.getElementById("result").innerHTML = "";
             document.getElementById("student_id").value = "";
         }
 
@@ -338,22 +374,33 @@ footer {
 
                 if (data.status === "ok") {
                     document.getElementById("result").innerHTML =
-                        `<a href="${data.link}" target="_blank">ورود به کلاس</a>`;
+                        `<div class="result-success">
+                            ✅ دسترسی شما تایید شد
+                            <br>
+                            <a href="${data.link}" target="_blank" class="result-btn">
+                                ورود به کلاس
+                            </a>
+                        </div>`;
                 }
-
                 else if (data.status === "denied") {
-                    document.getElementById("result").innerText =
-                        "شما اجازه شرکت در این جلسه را ندارید";
+                    document.getElementById("result").innerHTML =
+                        `<div class="result-error">
+                            ❌ شما اجازه شرکت در این جلسه را ندارید
+                        </div>`;
                 }
 
                 else if (data.status === "time_error") {
-                    document.getElementById("result").innerText =
-                        "در زمان مجاز اقدام کنید";
+                    document.getElementById("result").innerHTML =
+                        `<div class="result-warning">
+                            ⏰ لطفاً در زمان تعیین‌شده وارد شوید
+                        </div>`;
                 }
 
-                else {
-                    document.getElementById("result").innerText =
-                        "شماره دانشجویی معتبر نیست";
+               else {
+                    document.getElementById("result").innerHTML =
+                        `<div class="result-error">
+                            🔍 شماره دانشجویی معتبر نیست
+                        </div>`;
                 }
 
             });

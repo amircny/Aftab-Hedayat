@@ -139,7 +139,7 @@ def upload_student_excel(request, event_id):
                 })
 
             try:
-                df = pd.read_excel(excel_file)
+                df = pd.read_excel(excel_file, dtype=str)
             except Exception:
                 return render(request, "events/upload_excel.html", {
                     "form": form,
