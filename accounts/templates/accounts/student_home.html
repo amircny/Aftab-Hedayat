@@ -311,7 +311,7 @@ footer {
                 </div>
 
                 <div class="meta">
-                  ⏰{{ event.event_date }} &nbsp;  &nbsp;📅 • {{ event.event_time }}
+                  📅 {{ event.event_date|date:"Y-m-d" }} &nbsp;&nbsp; ⏰ {{ event.event_time|time:"H:i" }}
                 </div> 
 
             </div>
