@@ -23,6 +23,17 @@
             padding: 20px;
         }
 
+        .action-edit{
+            color:#2563eb;
+            font-weight:bold;
+            text-decoration:none;
+            margin:0 8px;
+        }
+
+        .action-edit:hover{
+            text-decoration:underline;
+        }
+
         .message {
             background: #dcfce7;
             color: #166534;
@@ -418,6 +429,9 @@
                         <td>{{ event.event_time }}</td>
                         <td class="actions">
                             <a href="/events/upload-excel/{{ event.id }}/">آپلود اکسل</a>
+                            <a href="/events/edit/{{ event.id }}/" class="action-edit">
+                                ویرایش
+                            </a>
                             <a href="/events/export-attendance/{{ event.id }}/">گزارش</a>
                             <a href="#"
                                class="delete"

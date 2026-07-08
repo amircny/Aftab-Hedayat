@@ -230,6 +230,27 @@ def event_report(request, event_id):
         "success": False,
         "message": "فعلاً گزارشی موجود نیست."
     })
+#================================
+#          Edit 
+#================================
+@login_required
+def edit_event(request, event_id):
+    event = Event.objects.get(id=event_id, teacher=request.user)
+
+    if request.method == "POST":
+        form = EventForm(request.POST, instance=event)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "ایونت با موفقیت ویرایش شد.")
+            return redirect("teacher_dashboard")
+    else:
+        form = EventForm(instance=event)
+
+    return render(request, "events/edit_event.html", {
+        "form": form,
+        "event": event
+    })
 
 # =========================
 # POP UP

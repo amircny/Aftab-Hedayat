@@ -10,6 +10,7 @@ urlpatterns = [
     path("report/<int:event_id>/", views.event_report, name="event_report"),
     path("check-access/", check_student_access),
     path("export-attendance/<int:event_id>/", export_attendance),
+    path("edit/<int:event_id>/", views.edit_event, name="edit_event"),
 ]
 
 
